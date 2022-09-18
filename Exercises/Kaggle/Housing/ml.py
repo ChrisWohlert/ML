@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from datetime import datetime
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 
 
@@ -28,7 +29,6 @@ dataset = pandas.read_csv(os.path.join(os.getcwd(), "Exercises/Kaggle/Housing/Ho
 
 X = dataset.drop(["Rent"], axis=1)
 y = dataset.take([2], axis=1)
-print(X)
 
 X["Posted On"] = X["Posted On"].apply(lambda x: (datetime.now() - datetime.strptime(x, "%Y-%m-%d")).days)
 floor = X["Floor"].apply(find_floor)
@@ -47,11 +47,12 @@ X = scaler.fit_transform(X)
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-print(X_train)
 
-#model = LinearRegression()
-model = DecisionTreeClassifier(max_depth=10)
-model.fit(X_train, y_train)
+#model = LinearRegression() # 0.25 -> 0.50
+#model = DecisionTreeClassifier(max_depth=100) # 0.99 -> 0.06
+#model = RandomForestClassifier(max_depth=10) # 0.78 -> 0.09
+
+model.fit(X_train, y_train.values.ravel())
 
 train_score = model.score(X_train, y_train)
 test_score = model.score(X_test, y_test)
